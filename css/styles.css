@@ -1,0 +1,51 @@
+/* Color palette:
+#157f1f flipped card
+#4cb963 selected card
+#a0eade site background
+#5c6784 matched cards
+#1d263b table background
+*/
+
+body {
+	background-color: #a0eade;
+	align-self: center;
+ 	margin: auto;
+}
+
+h1, h2, h3, span {
+	color: #1d263b;
+	font-family: fantasy;
+	font-weight: 200;
+	text-align: center;
+}
+
+div.card-table {
+ 	display: flex;
+ 	flex-wrap: wrap;
+ 	justify-content: center;
+ 	align-items: center;
+ 	align-content: center;
+ 	margin: auto;
+ 	background-color: #1d263b;
+ 	border-radius: 25px;
+ 	width: 80%;
+}
+
+div.card-table div {
+	background-color: #157f1f;
+	border: #4cb963 2px solid;
+	border-radius: 5px;
+	width: 150px;
+	height: 150px;
+	margin: 25px;
+	text-align: center;
+	font-size: 3em;
+	line-height: 125px;
+	color: #1d263b;
+}
+
+.button{
+	margin: auto;
+	margin-top: 10px;
+	display: block;
+}
