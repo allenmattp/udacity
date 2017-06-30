@@ -1,9 +1,9 @@
 This folder contains various projects I've completed as part of my adventures with Udacity.
 
-Baseball: Python, NumPy, Pandas, Matplotlib, Jupyter notebook
+**Baseball**: Python, NumPy, Pandas, Matplotlib, Jupyter notebook
 
-Madlibs: Python
+**Madlibs**: Python
 
-Memory: HTML, CSS, JavaScript
+**Memory**: HTML, CSS, JavaScript
 
-Tournament: Python, SQL, Vagrant
+**Tournament**: Python, SQL, Vagrant
