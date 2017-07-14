@@ -25,7 +25,7 @@ mapping = [("kindergarten", "building"),
            ("social_facility", "building"),
            ("community_centre", "building"),
            ("Furniture Store", "building"),
-           ("publice_building", "building"),
+           ("public_building", "building"),
            ("college", "building"),
            ("nursing_home", "building")
            ]
