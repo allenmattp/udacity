@@ -14,7 +14,7 @@ Nodes Tags ['id' (foreign), 'key', 'value', 'type']
 Ways ['id' (primary), 'user', 'uid', 'version', 'changeset', 'timestamp']
 Ways Tags ['id' (foreign), 'key', 'value', 'type']
 
-## Initial Review
+## Data Review
 
 1251 different users collaborated on my chunk of Seattle's data! The most prolific was Grauer Elefant who has made 779537 contributions (definitely an outlier... number 2 is at 11818 and number 14 is under 1000). Further, 459 users have only made a single contribution. To get a sense of this data has come together into a single set, I began by querying information on the tags.
 
@@ -132,6 +132,8 @@ mapping = [("kindergarten", "building"),
 This list was not comprehensive, but I didn't want to step on too many toes. If an argument could be made that the item was an amenity OF a building rather than needing to be a building itself, I tried to leave it be.
 
 Running the above code felt ... powerful. So many changes with a single click of a button!
+
+## Final Thoughts
 
 Whenever so many people collaborate on a project like this there are bound to be inconsistencies on how things are categorized. Building vs. Amenity is just one example; within these keys, there are a number of arguably equal values categorized differently. For example, public_building, community_centre and social_facility are all present in the database. How fiercely one would want to seek out these similar values is up for debate, but consistency would certainly be useful. If someone wished to, for example, explore if there was any relationship between high school graduation rates and access to community centres, overlooking data due to inconsistencies could majorly impact the study. For this reason I would argue that, in cases where the difference between different values is marginal, a strictly enforced standard is desirable. While gaining community consensus would be challenging and would then require vigiliance moderating it, the extra effort would be worthwhile.
 
