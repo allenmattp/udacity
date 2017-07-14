@@ -3,6 +3,7 @@
 Seattle, WA, United States
 
 https://www.openstreetmap.org/relation/237385
+
 https://mapzen.com/data/metro-extracts/metro/seattle_washington/
 
 I selected Seattle as it has been my home for the past 5+ years. In the short time I have lived here it has been massively reshaped by tech! It seemed appropriate that, as I develop my own technical skills, I should study the area.
