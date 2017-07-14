@@ -5,18 +5,20 @@ Seattle, WA, United States
 https://www.openstreetmap.org/relation/237385
 https://mapzen.com/data/metro-extracts/metro/seattle_washington/
 
-Uncompressed, Seattle's map area is about 1.6 GB. I began by extracting a more bite-sized sample and uploading information this into the database for review. I created four separate tables, which included: 
+I selected Seattle as it has been my home for the past 5+ years. In the short time I have lived here it has been massively reshaped by tech! It seemed appropriate that, as I develop my own technical skills, I should study the area.
+
+Uncompressed, Seattle's map area is about 1.6 GB. I used more bite-sized sample (only 166 MB) before creating the .csv files to upload into the database for review. The database includes four tables: 
 
 Nodes ['id' (primary), 'lat', 'lon', 'user', 'uid', 'version', 'changeset', 'timestamp']
 Nodes Tags ['id' (foreign), 'key', 'value', 'type']
 Ways ['id' (primary), 'user', 'uid', 'version', 'changeset', 'timestamp']
 Ways Tags ['id' (foreign), 'key', 'value', 'type']
 
-Initial Review
+## Initial Review
 
-To get a sense of the data, I began by querying information on the tags.
+1251 different users collaborated on my chunk of Seattle's data! The most prolific was Grauer Elefant who has made 779537 contributions (definitely an outlier... number 2 is at 11818 and number 14 is under 1000). Further, 459 users have only made a single contribution. To get a sense of this data has come together into a single set, I began by querying information on the tags.
 
-SELECT count(a.key) FROM (SELECT DISTINCT key FROM nodes_tags) as a;
+(The majority of queries performed can be viewed in the query.py file)
 
 There were 110460 node tags and 357 unique keys. The most common keys were:
 
@@ -51,13 +53,15 @@ For way tags, there were 559 unique keys from a total 332118. 179 keys had only 
 | name: 18848 |
 | street: 18640 |
 
-Looking deeper into the building category, users submitted 52 different values for the building key. The most common value was simply "yes", but they also included values as specific as "floating_home", "static_caravan" and "Tyler King's House". For some of these, the specificity is useful. For others (e.g. "garage" and "garages"), the values could be combined. 
+Looking deeper into the building category, users submitted 52 different values for the building key. The most common value was simply "yes", but they also included values as specific as "floating_home", "static_caravan" and "Tyler King's House". For some of these, the distinction is useful. For others (e.g. "garage" and "garages"), the values could be combined. 
 
 In an attempt to clean up the building keys, I dug deeper into a few of the values. Querying
+```SQL
+"SELECT * FROM ways_tags WHERE value='kindergarten'" 
+```
+I anticipated returning the row for the single building tag that appeared in earlier queries. However, multiple rows were returned! Possible keys included 'school', 'amenity' and 'building'. I felt that 'school' was most appropriate and decided to change them all accordingly:
 
-"SELECT * FROM ways_tags WHERE value='kindergarten'" I anticipated returning the row for the single building tag that appeared in earlier queries. However, multiple rows were returned! Possible keys included 'school', 'amenity' and 'building'. I felt that 'school' was most appropriate and decided to change them all accordingly:
-
-'''
+```python
 # we need the sqlite3 library to talk to the database
 import sqlite3
 
@@ -90,9 +94,9 @@ for key, value in mapping:
     rows = give_order('UPDATE ways_tags SET key = "'+value+'" WHERE value=?', key)
     print '* * * AFTER * * *:'
     print ask_question('SELECT * FROM ways_tags WHERE value=?', key)
-'''
+```
 
-After completing this, I discovered that other schools actually use the 'amenity' key. I disagree, but wanted to be consistent with the rest of the data. I queried some other education and found:
+After completing this, I performed a few additional queries to confirm the changes stuck and see if there were other academic buildings I could modify. In doing so I discovered that other schools actually use the 'amenity' key. I disagree with this categorization, but wanted to be consistent with the rest of the data. I queried some other education and found:
 	
 	* universities are overwhelmingly categorized as "building", although there are a few with amenity keys.
 	* schools are split between building (120) and amenities (172).
@@ -101,7 +105,7 @@ This seems to be a big point of contention. Places of worship, parking, retireme
 
 Google defines an amenity as "a desirable or useful feature or facility **of** a building or place." (emphasis mine) Hence, I decided I'd switch the building "amenities" over to the actual "building" key. I used the above code, but expanded mapping to include:
 
-'''
+```python
 mapping = [("kindergarten", "building"),
            ("school", "building"),
            ("university", "building"),
@@ -120,45 +124,15 @@ mapping = [("kindergarten", "building"),
            ("social_facility", "building"),
            ("community_centre", "building"),
            ("Furniture Store", "building"),
-           ("publice_building", "building"),
+           ("public_building", "building"),
            ("college", "building"),
            ("nursing_home", "building")
            ]
-'''
+```
 This list was not comprehensive, but I didn't want to step on too many toes. If an argument could be made that the item was an amenity OF a building rather than needing to be a building itself, I tried to leave it be.
 
 Running the above code felt ... powerful. So many changes with a single click of a button!
 
+Whenever so many people collaborate on a project like this there are bound to be inconsistencies on how things are categorized. Building vs. Amenity is just one example; within these keys, there are a number of arguably equal values categorized differently. For example, public_building, community_centre and social_facility are all present in the database. How fiercely one would want to seek out these similar values is up for debate, but consistency would certainly be useful. If someone wished to, for example, explore if there was any relationship between high school graduation rates and access to community centres, overlooking data due to inconsistencies could majorly impact the study. For this reason I would argue that, in cases where the difference between different values is marginal, a strictly enforced standard is desirable. While gaining community consensus would be challenging and would then require vigiliance moderating it, the extra effort would be worthwhile.
 
-
-
-
-
-
-
-
-
-
-I began the analysis by seeing how streets were formatted.
-
-Below is a truncated list of how the most frequently occurring labels appeared:
-
-| Name: Frequency |
-| -------------- |
-| Street: 9079 |
-| Northeast: 4551 |
-| South: 2784 |
-| Southwest: 2633 |
-| Avenue: 1849 |
-
-Looking good! Because the majority of entries used the formatting of only the first letter capitalized with no abbreviations or punctation I would seek to use this for all entries. A quick look at the less frequently occurring values confirmed, illustrated below by Avenues, confirmed that the data is not without inconsistencies:
-
-| Name: Frequency |
-| -------------- |
-| Ave: 1 |
-| avenue: 3 |
-| AVENUE: 1 |
-| Avenue: 1849 |
-
-Using the 'initial_audit.py' program to create an informed list of values that would need changing, I created a dictionary to identify poorly formatted values and what I'd like them changed to. While not comprehensive, this would clean most of the street data.
-
+A similar concern is one of specificity. In the dataset there exists categories for similar but (unlike the previous case) not identical items. For example, values for church, synagogue and place_of_worship all exist. An argument could be made that, in order to avoid overlooking items, these should all be combined into the more general place_of_worship. However, in these instances, I believe there is enough difference between the items that the increased division is desirable. While there's merit into combining values like hospital, doctor_office and dentist into a single catch-all category, the loss of nuance between the items outweighs whatever gains would be had.
