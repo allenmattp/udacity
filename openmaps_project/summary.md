@@ -98,8 +98,8 @@ for key, value in mapping:
 
 After completing this, I performed a few additional queries to confirm the changes stuck and see if there were other academic buildings I could modify. In doing so I discovered that other schools actually use the 'amenity' key. I disagree with this categorization, but wanted to be consistent with the rest of the data. I queried some other education and found:
 	
-	* universities are overwhelmingly categorized as "building", although there are a few with amenity keys.
-	* schools are split between building (120) and amenities (172).
+* universities are overwhelmingly categorized as "building", although there are a few with amenity keys.
+* schools are split between building (120) and amenities (172).
 
 This seems to be a big point of contention. Places of worship, parking, retirement homes and apartments are just a few of the values that show up with both keys. 
 
