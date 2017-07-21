@@ -1,45 +1,41 @@
-# 1. Summarize for us the goal of this project and how machine learning is 
-useful in trying to accomplish it. As part of your answer, give some 
-background on the dataset and how it can be used to answer the project 
-question. Were there any outliers in the data when you got it, and how did you
- handle those?
+# 1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?
 
 Enron was an enormous company and the majority of its employees were neither
 aware nor involved in fraudulent activity. Similarly, our dataset is huge and
 most of the individuals included within were uninvolved in the fraud and 
 consequently of little interest to our investigation. 
 
-The dataset contains 146 records: 145 unique individuals and one 'TOTAL' entry 
-that is removed for the purpose of this task. There are certainly other 
+The dataset contains 146 records. From these, three were removed as outliers: 'TOTAL' was removed as it contained the aggregate of all values, 'THE TRAVEL AGENCY IN THE PARK' was removed as it's not a person, and 'LOCKHART EUGENE E' was removed as he had no values associated with any of his features. There are certainly other 
 outliers found within the dataset (e.g. Kenneth Lay with $80,000,000 in loan 
 advances compared $2,000,000 for the next greatest amount, or David Haug with 
 millions in stock but no salary) but these are untouched as they are 
 meaningful information.
 
-Of the 145 individuals, 18 are identified as POI based on outside criteria 
+Of the 143 individuals, 18 are identified as POI based on outside criteria 
 (indictments, settlements or immunity deals). Included for each data point are 
 21 features. However, many features are missing data points:
 
-* feature | missing values
-* salary | 51
-* deferral_payments | 107
-* total_payments | 21
-* loan_advances | 142
-* bonus | 64
-* restricted_stock_deferred | 128
-* deferred_income | 97
-* total_stock_value | 20
-* expenses | 51
-* exercised_stock_options | 44
-* other | 53
-* long_term_incentive | 80
-* restricted_stock | 36
-* director_fees | 129
-* to_messages | 59
-* from_poi_to_this_person | 59
-* from_messages | 59
-* from_this_person_to_poi | 59
-* shared_receipt_with_poi | 59
+| feature | missing values |
+| ------- | --------------:|
+| salary | 49 |
+| deferral_payments | 105 |
+| total_payments | 20 |
+| loan_advances | 140 |
+| bonus | 62 |
+| restricted_stock_deferred | 126 |
+| deferred_income | 95 |
+| total_stock_value | 18 |
+| expenses | 49 |
+| exercised_stock_options | 42 |
+| other | 52 |
+| long_term_incentive | 78 |
+| restricted_stock | 34 |
+| director_fees | 127 |
+| to_messages | 57 |
+| from_poi_to_this_person | 57 |
+| from_messages | 57 |
+| from_this_person_to_poi | 57 |
+| shared_receipt_with_poi | 57 |
 
 This project seeks to sift through the enormous amount of data contained 
 within our set and identify the persons of interest (POI). Machine Learning is 
@@ -47,16 +43,7 @@ useful in accomplishing this as, if we assume the POI possess specific
 features that distinguish them from the rest of the population, we can tune 
 and train our algorithm to identify them. 
 
-# 2. What features did you end up using in your POI identifier, and what 
-selection process did you use to pick them? Did you have to do any scaling? 
-Why or why not? As part of the assignment, you should attempt to engineer your 
-own feature that does not come ready-made in the dataset -- explain what 
-feature you tried to make, and the rationale behind it. (You do not 
-necessarily have to use it in the final analysis, only engineer and test it.) 
-In your feature selection step, if you used an algorithm like a decision tree, 
-please also give the feature importances of the features that you use, and if 
-you used an automated feature selection function like SelectKBest, please 
-report the feature scores and reasons for your choice of parameter values.
+# 2. What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.
 
 My POI identifier utilizes the features 'exercised_stock_options', 
 'total_payments' and the ratio of 'from_this_person_to_poi' and 'to_messages' 
@@ -112,16 +99,9 @@ Through experimentation, most of these new features did not perform any better
 than existing features. The effort was not wasted however, as the new feature 
 'pct_to_poi' is used in my classifier.
 
-# 3. What algorithm did you end up using? What other one(s) did you try? How 
-did model performance differ between algorithms?
+# 3. What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
 and
-# 4. What does it mean to tune the parameters of an algorithm, and what can 
-happen if you don’t do this well?  How did you tune the parameters of your 
-particular algorithm? What parameters did you tune? (Some algorithms do not 
-have parameters that you need to tune -- if this is the case for the one you 
-picked, identify and briefly explain how you would have done it for the model 
-that was not your final choice or a different model that does utilize 
-parameter tuning, e.g. a decision tree classifier).
+# 4. What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? What parameters did you tune? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).
 
 I was able to quickly discard SVM for this task as it was not able to predict 
 any true positives out of the box. I began using a Naive Bayes classifier 
@@ -133,42 +113,62 @@ an understanding of how the features behaved. However, in order to more
 systematically approach feature selection, I implemented a decision tree so 
 that I could utilize its features_importances_ attribute. While both 
 algorithms performed similarly for Accuracy and Precision, the Decision Tree 
-outperformed the Naive Bayes in terms of Recall.
+outperformed the Naive Bayes in terms of Recall. Using the features:
 
-Committed to the decision tree, I utilized ensemble algorithms in order to 
-boost the performance of my algorithm. Using their default parameters, 
+['poi', 'exercised_stock_options', 'total_payments', 'pct_to_poi' ]
+
+The two algorithms performed as below:
+
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .85 | .44 | .18 |
+| DecisionTree | .83 | .43 | .40 |
+
+Committed to the decision tree, I utilized ensemble algorithms in order to try
+and boost the performance of my algorithm. Using their default parameters, 
 ExtraTrees and Random Forest each increased Precision by over 10 points but 
 lost more than that in Recall performance. Due to its robusiness to outliers, 
 I also implemented a Gradient Tree Boosting classifier which improved 
 Precision without sacrificing Recall. 
 
-Every dataset will be different, and so by necessity the optimal classifier 
-needs to be calibrated. Failure to do so can produce a classifier that is 
-either unable to usefully make predictions or to properly generalize. In order 
-to optimize my algorithms, I employed the GridSearchCV method and was able to 
-produce the following scores for each:
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| RandomForest | .87 | .55 | .23 |
+| ExtraTrees | .87 | .55 | .28 |
+| GradientBoosting | .85 | .45 | .35 |
 
-Algorithm | Default(Accuracy, Precision, Recall) | Optimized(Accuracy, 
-Precision, Recall)
-RandomForest: (.87, .55, .23) | (.87, .58, .23)
-ExtraTrees: (.87, .55, .28) | (.87, .53, .28)
-GradientBoosting: (.85, .45, .35) | (.87, .61, .18)
+Every dataset is different, and so by necessity the optimal classifier will have its parameters tuned so that it can complete the specific learning tesk in the best way possible. While many algorithims work pretty well using their default parameters, in order to produce "better" (the definition of better will change depending on the task) results tuning the model is necessary. In order to find the "best" set of parameters, one might manually experiment with different parameter settings, or they might utilize a built-in method such as GridSearchCV to exhuastively search over specified parameters. Failure to tune parameters may result in a classifier that is unable to make useful predictions or just works sub-optimally. In order to optimize my algorithms, I first employed the GridSearchCV method. Using its suggested parameters, I achieved the following scores for each algorithm:
+
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| RandomForest | .87 | .58 | .23 |
+| ExtraTrees | .87 | .53 | .28 |
+| GradientBoosting | .87 | .61 | .18 |
 
 While some categories improved, overall performance did not. I then realized 
 that the GridSearch was optimizing for the default metric, which is not 
 optimal for our task at hand. Because Recall has been the biggest challenge, I 
 set GridSearch's parameter accordingly and retuned GradientBoosting:
 
-(.86, .46, .31)
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GradientBoosting | .86 | .46 | .31 |
 
-Still not ideal. After manually tuning the parameters, my classifier usually 
-returned .87, .50, .37 ... take that, GridSearchCV.
+This still wasn't great. After manually tuning the parameters, my final classifier
+improved to: 
 
-It was challenging to do, as I found that nearly every improvement in recall 
-was at the expense of precision. However, this is an intuitive trade-off!
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GradientBoosting | .86 | .51 | .37 |
 
-# 5. What is validation, and what’s a classic mistake you can make if you do 
-it wrong? How did you validate your analysis?
+While accuracy and precision improved beyond my initial DecisionTree, depending
+if recall was determined to be the most important criteria for a successful
+predictor it might be worthwhile scrapping this model for the original decision
+tree. Tuning the parameters was challenging to do, as I found that nearly every
+improvement in recall was at the expense of precision. However, this is an 
+intuitive trade-off!
+
+# 5. What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
 
 Validation is important as it gives us an estimate of how our classifier will 
 perform on an independent dataset, and it helps to prevent us from overfitting 
@@ -183,9 +183,7 @@ small dataset, one can use a stratified shuffle split cross validation. This
 randomly performs the cross validation multiple times and returns its average 
 in order to realize its benefits while still utilizing all of the data.
 
-# 6. Give at least 2 evaluation metrics and your average performance for each 
-of them.  Explain an interpretation of your metrics that says something 
-human-understandable about your algorithm’s performance. 
+# 6. Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance. 
 
 The metrics I used to evaluate my classifier were accuracy, precision and 
 recall. Accuracy is the most straightforward of the three; it simply tells us 

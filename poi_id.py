@@ -32,7 +32,9 @@ with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
     
 ### Task 2: Remove outliers
-data_dict.pop('TOTAL', 0) # Remove the 'Total' entry for dataset
+data_dict.pop('TOTAL', 0)
+data_dict.pop('THE TRAVEL AGENCY IN THE PARK', 0)
+data_dict.pop('LOCKHART EUGENE E', 0)
 
 def count_NaN(feature):
     """ given a feature,
@@ -46,7 +48,7 @@ def count_NaN(feature):
     print feature, nan_count
 
 ### Count the number of 'NaN' values in a feature or list of features
-# for f in financial_features:
+#for f in financial_features:
 #    count_NaN(f)
 
 #for f in email_features:
