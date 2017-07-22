@@ -60,10 +60,12 @@ the decision tree scored:
 I then ran feature_importances_ attribute ten times, making note of features 
 that scored at least .2:
 
-total_payments XXXXXXXXXX
-bonus XXXXX
-exercised_stock_options XXXXX
-total_stock_value XX
+| Feature | Frequency |
+| ------- | --------- |
+| total_payments XXXXXXXXXX | 
+| bonus XXXXX | 
+| exercised_stock_options XXXXX | 
+| total_stock_value XX | 
 
 Removing all but these features, the decision tree scored:
 
@@ -121,7 +123,7 @@ Changing tack, I decided to test my algorithms by removing some of the remaining
  4 features:
 
 | Algorithm | sans total_payments | sans bonus | sans total_stock_value | sans exercised_stock_options |
-| --------- | -------- | --------- | ------ |
+| --------- | -------- | --------- | ------ | ------- |
 | GaussianNB | .84/.49/.35 | .85/.39/.23 | .85/.45/.24 | .85/.39/.23 |
 | Decision Tree | .80/.36/.39 | .83/.35/.36 | .79/.30/.34 | .81/.30/.29 |
 
