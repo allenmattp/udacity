@@ -5,11 +5,14 @@ aware nor involved in fraudulent activity. Similarly, our dataset is huge and
 most of the individuals included within were uninvolved in the fraud and 
 consequently of little interest to our investigation. 
 
-The dataset contains 146 records. From these, three were removed as outliers: 'TOTAL' was removed as it contained the aggregate of all values, 'THE TRAVEL AGENCY IN THE PARK' was removed as it's not a person, and 'LOCKHART EUGENE E' was removed as he had no values associated with any of his features. There are certainly other 
-outliers found within the dataset (e.g. Kenneth Lay with $80,000,000 in loan 
-advances compared $2,000,000 for the next greatest amount, or David Haug with 
-millions in stock but no salary) but these are untouched as they are 
-meaningful information.
+The dataset contains 146 records. From these, three were removed as outliers: 
+'TOTAL' was removed as it contained the aggregate of all values, 
+'THE TRAVEL AGENCY IN THE PARK' was removed as it's not a person, and 
+'LOCKHART EUGENE E' was removed as he had no values associated with any of 
+his features. There are certainly other outliers found within the dataset 
+(e.g. Kenneth Lay with $80,000,000 in loan advances compared $2,000,000 for 
+the next greatest amount, or David Haug with millions in stock but no salary) 
+but these are untouched as they are meaningful information.
 
 Of the 143 individuals, 18 are identified as POI based on outside criteria 
 (indictments, settlements or immunity deals). Included for each data point are 
@@ -45,35 +48,35 @@ and train our algorithm to identify them.
 
 # 2. What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.
 
-My POI identifier utilizes the features 'exercised_stock_options', 
-'total_payments' and the ratio of 'from_this_person_to_poi' and 'to_messages' 
-('pct_to_poi'). To select these features, I used a decision tree algorithm 
-with all available finance features. Using the features_importances_ attribute 
-of decision trees I identified features with values greater than .2 and 
-systematically removed these:
+To select features I deployed a decision tree with default parameters, using 
+most features (all but loan_advances, director_fees, restricted_stock_deferred 
+due to their small size, and email_address due to type). With all these features, 
+the decision tree scored:
 
-All financial features: 'loan_advances', .2204 and 'total_stock_value', .2385
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| Decision Tree | .80 | .23 | .22 |
 
-next: 'total_payments', .2941; 'restricted_stock_deferred', .2120; 
-'exercised_stock_options', .2387
+I then ran feature_importances_ attribute ten times, making note of features 
+that scored at least .2:
 
-next: 'deferral_payments', .2381; 'bonus', .2598; 'deferred_income', .2828
+total_payments XXXXXXXXXX
+bonus XXXXX
+exercised_stock_options XXXXX
+total_stock_value XX
 
-next: 'salary', .4902
+Removing all but these features, the decision tree scored:
 
-next: 'other', .2368
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| Decision Tree | .82 | .33 | .33 |
 
-I repeated this process for the email features:
+We're already within specifications! Let's try these features with the Naive 
+Bayes (the SVC was unable to return sufficient true positive predictions):
 
-All email features: 'to_messages', .2372; 'from_poi_to_this_person', .2451; 
-'from_messages', .2417; 'from_this_person_to_poi', .2587
-
-I then used my decision tree classifier with each of these features 
-individually, plotting them to perform an eye test and taking note of their 
-accuracy score. Some features were dismissed outright due to low sample size 
-(eg loan_advances, which only contained information on 3 individuals), others 
-because they would cause overfitting (eg restricted_stock_deferred, which 
-contained values for 17 non-POI but no POI).
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .86 | .46 | .26 |
 
 No feature scaling was performed for multiple reasons: There was a wide range 
 of values in both the financial and email feature. Many features contained 
@@ -84,20 +87,73 @@ measured in quantity of emails, each type of feature already resides in a
 consistent scale.
 
 In order to uncover further insights, I created a function to compare existing 
-features to each other. Examples included:
+features to each other. None of the email features made it through the 
+feature_importances_ test, so I first wanted to see if I could create new 
+email feature that proved useful:
 
-salary / total_payments in order to get a sense of how much of an individual's 
-total compensation was made up by their base salary.
+I compared the number of emails the individual wrote to POI versus their total 
+outgoing messages and named the new feature 'pct_to_poi'.
 
-salary / bonus to get a sense of how their base salary compared to the size of 
-their bonus.
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .86 | .46 | .26 |
+| Decision Tree | .82 | .33 | .33 |
 
-from_this_person_to_poi / to_messages to measure what percentage of outgoing 
-messages were sent to POIs.
+No improvement. Next, because I felt exercised stock options and total stock 
+value described similar things, I sought to combine them into a single feature. 
+I created 'ex_stock_vs_total_stock', which divided an individual's exercised 
+stock options by their total stock value. Adding it to the feature list did little:
 
-Through experimentation, most of these new features did not perform any better 
-than existing features. The effort was not wasted however, as the new feature 
-'pct_to_poi' is used in my classifier.
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .86 | .46 | .26 |
+| Decision Tree | .82 | .33 | .33 |
+
+Replacing total stock value and exercised stock options with the single feature 
+was counterproductive:
+
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .84| .36| .14|
+| Decision Tree | .78| .27| .29|
+
+Changing tack, I decided to test my algorithms by removing some of the remaining
+ 4 features:
+
+| Algorithm | sans total_payments | sans bonus | sans total_stock_value | sans exercised_stock_options |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .84/.49/.35 | .85/.39/.23 | .85/.45/.24 | .85/.39/.23 |
+| Decision Tree | .80/.36/.39 | .83/.35/.36 | .79/.30/.34 | .81/.30/.29 |
+
+Surprising to me was how much removing total_payments improved each algorithm. 
+Removing bonus was also interesting, although removing both at the same time
+did not help:
+
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .84| .47 | .27 |
+| Decision Tree | .77| .22| .20 |
+
+Trying to replace both with a new feature, Bonus / Total Payments, 
+was better but still not good:
+
+| Algorithm | Accuracy | Precision | Recall |
+| --------- | -------- | --------- | ------ |
+| GaussianNB | .84| .47 | .29 |
+| Decision Tree | .77| .27| .29 |
+
+I moved forward using:
+
+| Feature | Importance |
+| ------- | ----- |
+| poi | 0.254017926911 |
+| bonus | 0.37436442603 |
+| total_stock_value | 0.281266968326 |
+| exercised_stock_options | 0.090350678733 |
+
+Note: Dropping exercised_stock_options and using just bonus/total_stock_value 
+doesn't change the Decision Trees performance much, but damaages recall for 
+the Naive Bayes.
 
 # 3. What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
 and
@@ -106,67 +162,45 @@ and
 I was able to quickly discard SVM for this task as it was not able to predict 
 any true positives out of the box. I began using a Naive Bayes classifier 
 because it is easy to implement and I did not think it would be prone to 
-breaking with this dataset. While its accuracy was usually near .80 for 
-accuracy with precision and recall scores under .3, it provided a useful 
-starting point to become more comfortable with the dataset and begin to gain 
-an understanding of how the features behaved. However, in order to more 
-systematically approach feature selection, I implemented a decision tree so 
-that I could utilize its features_importances_ attribute. While both 
-algorithms performed similarly for Accuracy and Precision, the Decision Tree 
-outperformed the Naive Bayes in terms of Recall. Using the features:
+breaking with this dataset. It provided a useful starting point to become 
+more comfortable with the dataset and begin to gain an understanding of 
+how the features behaved. However, in order to more systematically approach 
+feature selection, I implemented a decision tree so that I could utilize its 
+features_importances_ attribute. The Naive Bayes was generally more precise, 
+while the decision tree had better recall. 
 
-['poi', 'exercised_stock_options', 'total_payments', 'pct_to_poi' ]
+Every dataset is different, and so by necessity the optimal classifier will 
+have its parameters tuned so that it can complete the specific learning tesk 
+in the best way possible. While many algorithims work pretty well using their 
+default parameters, in order to produce "better" (the definition of better will 
+change depending on the task) results tuning the model is necessary. In order 
+to find the "best" set of parameters, one might manually experiment with 
+different parameter settings, or they might utilize a built-in method such as 
+GridSearchCV to exhuastively search over specified parameters. Failure to 
+tune parameters may result in a classifier that is unable to make useful 
+predictions or just works sub-optimally. 
 
-The two algorithms performed as below:
+The GaussianNB() does not have parameters to tune and was meeting 
+specifications with my selected features.
 
-| Algorithm | Accuracy | Precision | Recall |
-| --------- | -------- | --------- | ------ |
-| GaussianNB | .85 | .44 | .18 |
-| DecisionTree | .83 | .43 | .40 |
-
-Committed to the decision tree, I utilized ensemble algorithms in order to try
-and boost the performance of my algorithm. Using their default parameters, 
-ExtraTrees and Random Forest each increased Precision by over 10 points but 
-lost more than that in Recall performance. Due to its robusiness to outliers, 
-I also implemented a Gradient Tree Boosting classifier which improved 
-Precision without sacrificing Recall. 
-
-| Algorithm | Accuracy | Precision | Recall |
-| --------- | -------- | --------- | ------ |
-| RandomForest | .87 | .55 | .23 |
-| ExtraTrees | .87 | .55 | .28 |
-| GradientBoosting | .85 | .45 | .35 |
-
-Every dataset is different, and so by necessity the optimal classifier will have its parameters tuned so that it can complete the specific learning tesk in the best way possible. While many algorithims work pretty well using their default parameters, in order to produce "better" (the definition of better will change depending on the task) results tuning the model is necessary. In order to find the "best" set of parameters, one might manually experiment with different parameter settings, or they might utilize a built-in method such as GridSearchCV to exhuastively search over specified parameters. Failure to tune parameters may result in a classifier that is unable to make useful predictions or just works sub-optimally. In order to optimize my algorithms, I first employed the GridSearchCV method. Using its suggested parameters, I achieved the following scores for each algorithm:
+In order to improve the Decision Tree, I utilized the GridSearchCV method to 
+suggest values for the max_depth, min_samples_leaf, max_features and 
+min_samples_split parameters. Making these changes improved my classifier:
 
 | Algorithm | Accuracy | Precision | Recall |
 | --------- | -------- | --------- | ------ |
-| RandomForest | .87 | .58 | .23 |
-| ExtraTrees | .87 | .53 | .28 |
-| GradientBoosting | .87 | .61 | .18 |
+| Default | .80| .36 | .39 |
+| Optimized | .82| .41| .42 |
 
-While some categories improved, overall performance did not. I then realized 
-that the GridSearch was optimizing for the default metric, which is not 
-optimal for our task at hand. Because Recall has been the biggest challenge, I 
-set GridSearch's parameter accordingly and retuned GradientBoosting:
 
-| Algorithm | Accuracy | Precision | Recall |
-| --------- | -------- | --------- | ------ |
-| GradientBoosting | .86 | .46 | .31 |
+'''
+tree.DecisionTreeClassifier(max_depth = 10, min_samples_leaf = 1, 
+							max_features='auto', min_samples_split = 2)
 
-This still wasn't great. After manually tuning the parameters, my final classifier
-improved to: 
+'''
 
-| Algorithm | Accuracy | Precision | Recall |
-| --------- | -------- | --------- | ------ |
-| GradientBoosting | .86 | .51 | .37 |
-
-While accuracy and precision improved beyond my initial DecisionTree, depending
-if recall was determined to be the most important criteria for a successful
-predictor it might be worthwhile scrapping this model for the original decision
-tree. Tuning the parameters was challenging to do, as I found that nearly every
-improvement in recall was at the expense of precision. However, this is an 
-intuitive trade-off!
+While not as precise as the Naive Bayes, the tuned Decision Tree exceeds .40
+in both precision and necall.
 
 # 5. What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
 
@@ -194,18 +228,18 @@ individuals who are not POI, we could create a relatively accurate algorithm
 that simply identifies everyone as a non-POI. For a better idea of how our 
 classifier performs, we'll also use Precision and Recall.
 
-Precision, where all three of the ensemble decision trees fared well, is an 
-indicator of how confident we can be that a person labeled POI actually is 
-POI. If our goal was to only label indvidials as POI if we were nearly certain 
-that they actually were POI (ie we want to avoid false accusations), we would 
-endeavor to construct a classifier with a very high precision.
+Precision is an indicator of how confident we can be that a person labeled POI 
+actually is POI. If our goal was to only label indvidials as POI if we were 
+nearly certain that they actually were POI (ie we want to avoid false 
+accusations), we would endeavor to construct a classifier with a very high 
+precision.
 
-Recall was a challenge for most of the decision trees. Recall measures how 
-well we avoid missing POIs. If our investigation simply wanted to identify 
-persons who we might want to question (not necessarily charge), casting a 
-wider net and seeking out a higher Recall would be important.
+Recall measures how well we avoid missing POIs. If our investigation simply 
+wanted to identify persons who we might want to question (not necessarily 
+charge), casting a wider net and seeking out a higher Recall would be 
+important.
 
 # References
 
-This project was completed using the sklearn documentation and the Udacity 
+This project was completed using the sklearn documentation and the Udacity
 course videos.
