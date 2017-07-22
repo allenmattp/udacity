@@ -62,10 +62,10 @@ that scored at least .2:
 
 | Feature | Frequency |
 | ------- | --------- |
-| total_payments XXXXXXXXXX | 
-| bonus XXXXX | 
-| exercised_stock_options XXXXX | 
-| total_stock_value XX | 
+| total_payments | XXXXXXXXXX | 
+| bonus | XXXXX | 
+| exercised_stock_options | XXXXX | 
+| total_stock_value | XX | 
 
 Removing all but these features, the decision tree scored:
 
@@ -195,11 +195,11 @@ min_samples_split parameters. Making these changes improved my classifier:
 | Optimized | .82| .41| .42 |
 
 
-'''
+```
 tree.DecisionTreeClassifier(max_depth = 10, min_samples_leaf = 1, 
 							max_features='auto', min_samples_split = 2)
 
-'''
+```
 
 While not as precise as the Naive Bayes, the tuned Decision Tree exceeds .40
 in both precision and necall.
