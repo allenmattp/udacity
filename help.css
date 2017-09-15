@@ -1,0 +1,195 @@
+/*-- Resets --*/
+
+/*--REMOVE MENU TABS--*/
+#header-tabs a:nth-child(1){
+  display:none;
+}
+#header-tabs a:nth-child(2){
+  display:none;
+}
+#header-tabs a:nth-child(3){
+  display:none;
+}
+
+
+#footer-tabs a:nth-child(1){
+  display:none;
+}
+body {
+ 
+  background-image: none;
+  background-color: #fff;
+}
+
+
+
+.rounded-6,
+.banner,
+.page-tabs,
+.page-tabs .nav-link a:first-child {
+  border-radius: 0;
+  border: 0;
+}
+
+.banner,
+.page-tabs,
+.page-tabs .nav-link a {
+  border: 0;
+}
+
+.page-tabs {
+  border-bottom: 1px solid #ccc;
+}
+
+.footer {
+  border-top: 1px solid #e6e6e6;
+}
+
+/*-- Content Sizing --*/
+.help-center {
+	padding: 1em 0;
+}
+
+.hc-search {
+  width: 66.666%;
+}
+
+.content, .content-form, .content-light {
+	padding: 1.5em 0em;
+}
+
+.main {
+	width: 65.166%;
+	margin-right: 3%;
+}
+
+.sidebar {
+	width: 31.833%;
+}
+
+/*-- Nav --*/
+.page-tabs .nav-link a {
+	transition: all .2s;
+}
+
+.page-tabs .nav-link a:hover {
+	background-color: #CCCCCC;
+}
+
+/*-- Search field style --*/
+.help-center .hc-search-form {
+  background-color: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.help-center .hc-search-form {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+input.special {
+  padding: 0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border: none;
+  border-bottom: 1px solid #6088E0;
+  border-radius: 0;
+}
+
+input.special:focus {
+	border-color: #2451b6 ;
+	outline: 0;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.hc-search-button .btn.btn-primary {
+	background: none;
+	border: none;
+	border-radius: 2px;
+	box-shadow: none;
+	color: #6088E0;
+	font-weight: 700;
+	letter-spacing: .5px;
+  	transition: background .2s;
+}
+
+.hc-search-button .btn.btn-primary:hover {
+  background: #f3f3f3;
+}
+
+@media (max-width: 45em){
+  .help-center .hc-search-input input {
+    border-radius: 0;
+  }
+}
+
+/*-- Misc --*/
+.cs-s h3 a {
+	color: inherit;  
+}
+
+
+/*-- Highlight underlined text --*/
+u {
+  background-color: #6088E0; 
+  color: white; 
+  padding: 1px 3px; 
+  margin: 0px 2px; 
+  white-space: nowrap;
+  text-decoration: none
+}
+
+.tip { 
+  padding: 34px 72px; 
+  background-color: #E7EAF2;
+  color: #3C5CA9;
+  margin: 50px 0;
+}
+/*-- Fixed Menu for help articles --*/
+
+.nav_menu {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  z-index: 100;
+  position: fixed;
+  bottom: 10%;
+  right: 4px;
+  border: 1px solid #6495FF;
+}
+.nav_menu a {
+  display: block;
+  background-color: #F5F6F7;
+  color: #3C5CA9;
+  text-decoration: none;
+  padding: 8px
+}
+.nav_menu a:hover {
+  background-color: #6495FF;
+  display: block;
+  color: #F5F6F7;
+  text-decoration: none;
+  padding: 8px
+}
+.nav_menu a:active {
+  background-color: #6495FF;
+  display: block;
+  color: #F5F6F7;
+  text-decoration: none;
+  padding: 8px
+}
+/*-- End Fixed Menu --*/
+
+/*-- Hide Case case history from home page --*/
+.hc-nav [href="/support/tickets"] {
+    display: none;
+}
+
+p br {
+  display: none;
+}
